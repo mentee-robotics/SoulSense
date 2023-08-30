@@ -156,7 +156,7 @@ int main(void)
 			  ADC_update_payload(&sensors);
 			  soul_update_payload(&soul_sense);
 	          send_message(&comm_controller, soul_sense.payload);
-//	          memset(comm_controller.RxData, 0 , sizeof(comm_controller.RxData));  //deleting used content from RxData buffer
+	          memset(comm_controller.RxData, 0 , RX_BUFFER_SIZE);  //deleting used content from RxData buffer
 	          currentState = IDLE;
 	          break;
 	      }
