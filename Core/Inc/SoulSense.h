@@ -15,16 +15,13 @@
 #include <string.h>
 
 typedef struct {
-	ContactSensors adc_data;
-	IMU imu_data;
-    FwVersion sole_version;
     uint8_t payload[SIZE_OF_SOLE_DATA];
 } SoulSense;
 
 
-void soul_init(SoulSense* soul_sense, ContactSensors* adc_data , IMU* imu_data , FwVersion* sole_version);
+void soul_init(SoulSense* soul_sense);
 
-void soul_update_payload(SoulSense* soul_sense);
+void soul_update_payload(SoulSense* soul_sense, ContactSensors* adc_data, IMU* imu_data, FwVersion* sole_version);
 
 
 

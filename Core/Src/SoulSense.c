@@ -13,25 +13,29 @@
 #include "configuration.h"
 
 // Adjust soul_init to use pointers for the parameters
-void soul_init(SoulSense* soul_sense, ContactSensors* adc_data, IMU* imu_data, FwVersion* sole_version){
+void soul_init(SoulSense* soul_sense){
     memset(soul_sense->payload, 0, SIZE_OF_SOLE_DATA);
-    soul_sense->adc_data = *adc_data; // Dereference the pointers to copy the data
-    soul_sense->imu_data = *imu_data;
-    soul_sense->sole_version = *sole_version;
 }
 
-void soul_update_payload(SoulSense* soul_sense) {
+void soul_update_payload(SoulSense* soul_sense, ContactSensors* adc_data, IMU* imu_data, FwVersion* sole_version) {
     int index = 0;
 
     // Copy ContactSensors payload
-    memcpy(&soul_sense->payload[index], soul_sense->adc_data.payload, NUMBER_OF_SENSORS*4);
-    index += sizeof(soul_sense->adc_data.payload);
+    for (int i = 0; i < NUMBER_OF_SENSORS * 4; i++) {
+        soul_sense->payload[index] = adc_data->payload[i];
+        index++;
+    }
 
     // Copy IMU payload
-    memcpy(&soul_sense->payload[index], soul_sense->imu_data.payload, SIZE_OF_IMU_DATA);
-    index += sizeof(soul_sense->imu_data.payload);
+    for (int i = 0; i < SIZE_OF_IMU_DATA; i++) {
+        soul_sense->payload[index] = imu_data->payload[i];
+        index++;
+    }
 
     // Copy FwVersion payload (version)
-    memcpy(&soul_sense->payload[index], soul_sense->sole_version.version, VERSION_LEN);
+    for (int i = 0; i < VERSION_LEN; i++) {
+        soul_sense->payload[index] = sole_version->version[i];
+        index++;
+    }
 }
 

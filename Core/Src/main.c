@@ -114,7 +114,7 @@ int main(void)
   ADC_init(&hadc2,&sensors);
   imu_init(&hi2c1 , &imu);
   version_init(&version);
-  soul_init(&soul_sense, &sensors, &imu, &version);
+  soul_init(&soul_sense);
   currentState = IDLE;
 
   //TODO add Resistor reading for side configuration
@@ -145,7 +145,7 @@ int main(void)
 	    	  }
 	    	  else {
 	    		  currentState = IDLE;
-//	    		  memset(comm_controller.RxData, 0 , sizeof(comm_controller.RxData));
+	    		  memset(comm_controller.RxData, 0 , RX_BUFFER_SIZE);
 	    	  }
 
 	          break;
@@ -154,9 +154,9 @@ int main(void)
 	      {
 			  imu_update_payload(&imu);
 			  ADC_update_payload(&sensors);
-			  soul_update_payload(&soul_sense);
+			  soul_update_payload(&soul_sense , &sensors , &imu , &version);
 	          send_message(&comm_controller, soul_sense.payload);
-//	          memset(comm_controller.RxData, 0 , sizeof(comm_controller.RxData));  //deleting used content from RxData buffer
+	          memset(comm_controller.RxData, 0 , RX_BUFFER_SIZE);  //deleting used content from RxData buffer
 	          currentState = IDLE;
 	          break;
 	      }
