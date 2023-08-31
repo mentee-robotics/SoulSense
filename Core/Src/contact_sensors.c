@@ -22,10 +22,11 @@ void ADC_update_payload(ContactSensors *sensors) {
 
     // Iterate through each ADC value
     for (int i = 0; i < NUMBER_OF_SENSORS; i++) {
-        // Extract each byte from the 32-bit ADC value
-        *payloadPtr++ = (sensors->adcValues[i] >> 24) & 0xFF;  // MSB
+        // Extract each byte from the 32-bit ADC value and flip the MSB for the most significant byte
+        *payloadPtr++ = ((sensors->adcValues[i] >> 24) & 0xFF) ^ 0x80;  // MSB with flipped bit
         *payloadPtr++ = (sensors->adcValues[i] >> 16) & 0xFF;
         *payloadPtr++ = (sensors->adcValues[i] >> 8) & 0xFF;
-        *payloadPtr++ = sensors->adcValues[i] & 0xFF;          // LSB
+        *payloadPtr++ = sensors->adcValues[i] & 0xFF;                    // LSB
     }
 }
+
