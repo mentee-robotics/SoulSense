@@ -1,0 +1,2 @@
+../Core/Src/contact_sensors.c:12:6:ADC_init	16	static
+../Core/Src/contact_sensors.c:19:6:ADC_update_payload	24	static
