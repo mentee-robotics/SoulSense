@@ -16,12 +16,15 @@
 
 typedef struct {
     uint8_t payload[SIZE_OF_SOLE_DATA];
+    IMU* imu;
+    ContactSensors* contact_sensors;
+    FwVersion* version;
 } SoulSense;
 
 
-void soul_init(SoulSense* soul_sense);
+void soul_init(SoulSense* soul_sense , I2C_HandleTypeDef* i2c , ADC_HandleTypeDef *adc);
 
-void soul_update_payload(SoulSense* soul_sense, ContactSensors* adc_data, IMU* imu_data, FwVersion* sole_version);
+void soul_update_payload(SoulSense* soul_sense);
 
 
 

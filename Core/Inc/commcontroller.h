@@ -19,13 +19,20 @@ typedef struct {
     FDCAN_TxHeaderTypeDef TxHeader;
 	FDCAN_RxHeaderTypeDef RxHeader;
 	FDCAN_HandleTypeDef fdcan;
+	FDCAN_FilterTypeDef filter;
 	uint8_t RxData[RX_BUFFER_SIZE];
 	uint16_t device_id;
 } CommController;
 
+
+
+
+
 void comm_controller_init(FDCAN_HandleTypeDef *fdcan, CommController *comm);
 
 void send_message(CommController *comm , uint8_t *payload);
+
+//void set_device_address(CommController *comm);
 
 int process_received_message(CommController *comm);
 

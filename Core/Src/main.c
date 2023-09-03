@@ -54,12 +54,12 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-CommController comm_controller;
-ContactSensors sensors;
-IMU imu;
-FwVersion version;
 States currentState;
 SoulSense soul_sense;
+CommController comm_controller;
+IMU imu;
+ContactSensors contact_sensors;
+FwVersion fw_version;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -111,10 +111,10 @@ int main(void)
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start_IT(&htim3);
   comm_controller_init(&hfdcan1 , &comm_controller);
-  ADC_init(&hadc2,&sensors);
-  imu_init(&hi2c1 , &imu);
-  version_init(&version);
-  soul_init(&soul_sense);
+  soul_sense.imu = &imu;
+  soul_sense.contact_sensors = &contact_sensors;
+  soul_sense.version = &fw_version;
+  soul_init(&soul_sense , &hi2c1 , &hadc2);
   currentState = IDLE;
 
   //TODO add Resistor reading for side configuration
@@ -125,23 +125,25 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-//	  if (HAL_GetTick()%20 == 0) {
-//		  imu_read_data(&imu); //TODO Oori to implement
-//	  }
 
 	  switch(currentState) {
 	  	  case IDLE:
 		  	  break;
 
+
 	      case READ_IMU:
-//	    	  imu_read_data(&imu); //TODO Oori to implement
+	    	  //TODO more checking
+	    	  if (soul_sense.imu->errInit == BNO_OK )  imu_read_data(soul_sense.imu); //checks that the imu has been properly initialized.
 	    	  currentState = IDLE;
 	          break;
 
 
-	      case RECEIVE_MESSAGE:
-	    	  if(process_received_message(&comm_controller)){
-	    		  currentState =  TRANSMIT_MESSAGE;
+	      case RECEIVE_N_TRANSMIT:
+	    	  if(process_received_message(&comm_controller)){  //received a request to send data
+	    		  soul_update_payload(&soul_sense);  //converting the data into byte array
+				  send_message(&comm_controller, soul_sense.payload);  //sending the byte array
+				  memset(comm_controller.RxData, 0 , RX_BUFFER_SIZE);  //deleting used content from RxData buffer
+				  currentState = IDLE;
 	    	  }
 	    	  else {
 	    		  currentState = IDLE;
@@ -149,17 +151,6 @@ int main(void)
 	    	  }
 
 	          break;
-
-	      case TRANSMIT_MESSAGE:
-	      {
-			  imu_update_payload(&imu);
-			  ADC_update_payload(&sensors);
-			  soul_update_payload(&soul_sense , &sensors , &imu , &version);
-	          send_message(&comm_controller, soul_sense.payload);
-	          memset(comm_controller.RxData, 0 , RX_BUFFER_SIZE);  //deleting used content from RxData buffer
-	          currentState = IDLE;
-	          break;
-	      }
 
 
 	      default:
@@ -231,7 +222,7 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
 			Error_Handler();
 		}
 	}
-	currentState = RECEIVE_MESSAGE;
+	currentState = RECEIVE_N_TRANSMIT;
 	if (HAL_FDCAN_ActivateNotification(&comm_controller.fdcan, FDCAN_IT_RX_FIFO0_NEW_MESSAGE, 0) != HAL_OK)
 	{
 		Error_Handler();

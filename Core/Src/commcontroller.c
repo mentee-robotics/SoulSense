@@ -30,6 +30,17 @@ void comm_controller_init(FDCAN_HandleTypeDef* fdcan, CommController *comm){
 	comm->TxHeader.TxEventFifoControl=FDCAN_NO_TX_EVENTS;
 	comm->TxHeader.MessageMarker=0;
 
+	// Set number of extended ID filters to 1
+
+	comm->filter.IdType = FDCAN_STANDARD_ID;
+	comm->filter.FilterIndex = 0;
+	comm->filter.FilterType = FDCAN_FILTER_MASK;
+	comm->filter.FilterConfig = FDCAN_FILTER_TO_RXFIFO0;
+	comm->filter.FilterID1 = comm->device_id;
+	comm->filter.FilterID2 = 0x7FF;
+	HAL_FDCAN_ConfigFilter(&comm->fdcan, &comm->filter);
+	HAL_FDCAN_ConfigGlobalFilter(&comm->fdcan, FDCAN_REJECT, FDCAN_REJECT, FDCAN_REJECT_REMOTE, FDCAN_REJECT_REMOTE);
+
 	memset(comm->RxData , 0 , RX_BUFFER_SIZE);
 
 	HAL_FDCAN_Start(&comm->fdcan);
@@ -53,3 +64,25 @@ int process_received_message(CommController *comm) {
 	}
 	return flag;
 }
+
+
+//void set_device_address(CommController *comm)
+//{
+//	 uint8_t bit0 =(HAL_GPIO_ReadPin(ID_Bit0_GPIO_Port, ID_Bit0_Pin)==GPIO_PIN_SET);//1 else 0
+//	 uint8_t bit1 =(HAL_GPIO_ReadPin(ID_Bit1_GPIO_Port, ID_Bit1_Pin)==GPIO_PIN_SET);//1 else 0
+//	 uint8_t bit2 =(HAL_GPIO_ReadPin(ID_Bit2_GPIO_Port, ID_Bit2_Pin)==GPIO_PIN_SET);//1 else 0
+//
+//	 uint8_t ID =  (bit2 << 2) | (bit1 << 1) | bit0;
+//
+//	 switch(ID){
+//
+//		 case 1:
+//			 comm->device_id=RIGHT_SOLE_SENSE_ID;
+//			 break;
+//
+//		 case 2:
+//			 comm->device_id=LEFT_SOLE_SENSE_ID;
+//			 break;
+//	 }
+//}
+

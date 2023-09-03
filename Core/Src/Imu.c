@@ -29,7 +29,6 @@
 
 // Initializing the IMU
 void imu_init(I2C_HandleTypeDef* i2c,IMU* imu) {
-//	memset(imu->payload , 0 , SIZE_OF_IMU_DATA);
     // Ensure that the BNO pointer is allocated (if using dynamic memory)
     imu->bno = (bno055_t*) malloc(sizeof(bno055_t));
 

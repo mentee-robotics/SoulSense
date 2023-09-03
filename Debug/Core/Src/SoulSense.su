@@ -1,2 +1,2 @@
-../Core/Src/SoulSense.c:16:6:soul_init	16	static
-../Core/Src/SoulSense.c:20:6:soul_update_payload	40	static
+../Core/Src/SoulSense.c:16:6:soul_init	24	static
+../Core/Src/SoulSense.c:23:6:soul_update_payload	32	static
