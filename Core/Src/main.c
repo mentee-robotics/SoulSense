@@ -109,13 +109,14 @@ int main(void)
   MX_TIM3_Init();
   MX_FDCAN1_Init();
   /* USER CODE BEGIN 2 */
-  HAL_TIM_Base_Start_IT(&htim3); // starting timer IT
   soul_sense.imu = &imu;
   soul_sense.contact_sensors = &contact_sensors;
   soul_sense.version = &fw_version;
   soul_init(&soul_sense , &hi2c1 , &hadc2); // inits the soulsense, imu, contact sensors
   comm_controller_init(&hfdcan1 , &comm_controller);
+
   currentState = IDLE;
+  HAL_TIM_Base_Start_IT(&htim3); // starting timer IT
 
   //TODO add Resistor reading for side configuration
 
