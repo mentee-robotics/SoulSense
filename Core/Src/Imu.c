@@ -51,7 +51,6 @@ void imu_init(I2C_HandleTypeDef* i2c,IMU* imu) {
 void imu_read_data(IMU* imu) {
 	//TODO more checking
 	if (imu->errInit == BNO_OK ) {  //checks that the imu has been properly initialized.
-
 		imu->errGyr = imu->bno->gyro(imu->bno, &imu->gyroscope);
 		imu->errAcc = imu->bno->acc(imu->bno, &imu->accelerometer);
 	    imu->errQua = imu->bno->quaternion(imu->bno, &imu->quaternion);

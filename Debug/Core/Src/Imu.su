@@ -1,4 +1,4 @@
 ../Core/Src/Imu.c:31:6:imu_init	24	static
 ../Core/Src/Imu.c:51:6:imu_read_data	16	static
-../Core/Src/Imu.c:62:6:IMU_Deinit	16	static
-../Core/Src/Imu.c:68:6:imu_update_payload	56	static
+../Core/Src/Imu.c:72:6:IMU_Deinit	16	static
+../Core/Src/Imu.c:78:6:imu_update_payload	56	static
