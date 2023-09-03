@@ -109,12 +109,12 @@ int main(void)
   MX_TIM3_Init();
   MX_FDCAN1_Init();
   /* USER CODE BEGIN 2 */
-  HAL_TIM_Base_Start_IT(&htim3);
-  comm_controller_init(&hfdcan1 , &comm_controller);
+  HAL_TIM_Base_Start_IT(&htim3); // starting timer IT
   soul_sense.imu = &imu;
   soul_sense.contact_sensors = &contact_sensors;
   soul_sense.version = &fw_version;
-  soul_init(&soul_sense , &hi2c1 , &hadc2);
+  soul_init(&soul_sense , &hi2c1 , &hadc2); // inits the soulsense, imu, contact sensors
+  comm_controller_init(&hfdcan1 , &comm_controller);
   currentState = IDLE;
 
   //TODO add Resistor reading for side configuration
@@ -132,29 +132,24 @@ int main(void)
 
 
 	      case READ_IMU:
-	    	  //TODO more checking
-	    	  if (soul_sense.imu->errInit == BNO_OK )  imu_read_data(soul_sense.imu); //checks that the imu has been properly initialized.
+	    	  imu_read_data(soul_sense.imu);
 	    	  currentState = IDLE;
 	          break;
 
 
 	      case RECEIVE_N_TRANSMIT:
-	    	  if(process_received_message(&comm_controller)){  //received a request to send data
+	    	  //received a request to send data
+	    	  if(process_received_message(&comm_controller)){
 	    		  soul_update_payload(&soul_sense);  //converting the data into byte array
 				  send_message(&comm_controller, soul_sense.payload);  //sending the byte array
-				  memset(comm_controller.RxData, 0 , RX_BUFFER_SIZE);  //deleting used content from RxData buffer
-				  currentState = IDLE;
-	    	  }
-	    	  else {
-	    		  currentState = IDLE;
-	    		  memset(comm_controller.RxData, 0 , RX_BUFFER_SIZE);
 	    	  }
 
+	    	  memset(comm_controller.RxData, 0 , RX_BUFFER_SIZE);   //deleting used content from RxData buffer
+	    	  currentState = IDLE;
 	          break;
 
 
 	      default:
-	          // Handle any unexpected state
 	    	  currentState = IDLE;
 	          break;
 	  }
@@ -213,7 +208,7 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
+void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs) //fdcan callback IT
 {
 	if ((RxFifo0ITs & FDCAN_IT_RX_FIFO0_NEW_MESSAGE) != RESET)
 	{
@@ -229,11 +224,12 @@ void HAL_FDCAN_RxFifo0Callback(FDCAN_HandleTypeDef *hfdcan, uint32_t RxFifo0ITs)
 	}
 }
 
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)   //timer callback IT
 {
 	if (htim->Instance == TIM3){
 		currentState = READ_IMU;
-
 	}
 }
 
