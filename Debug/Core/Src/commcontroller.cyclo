@@ -1,3 +1,4 @@
 ../Core/Src/commcontroller.c:16:6:comm_controller_init	1
 ../Core/Src/commcontroller.c:52:6:send_message	2
 ../Core/Src/commcontroller.c:59:5:process_received_message	2
+../Core/Src/commcontroller.c:69:6:set_device_address	3

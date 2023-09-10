@@ -16,7 +16,7 @@
 void comm_controller_init(FDCAN_HandleTypeDef* fdcan, CommController *comm){
 
 	comm->fdcan = *fdcan;
-	comm->device_id = DEVICE_ID;
+	set_device_address(comm);
 	comm->send_message = false;
 	comm->received_message = false;
 
@@ -59,30 +59,33 @@ void send_message(CommController *comm , uint8_t *payload) {
 int process_received_message(CommController *comm) {
 
 	int flag = 0;
-	if (comm->RxHeader.Identifier == DEVICE_ID) {  //simple logic for now, its a flag to send a message back from the device
+	if (comm->RxHeader.Identifier == comm->device_id) {  //simple logic for now, its a flag to send a message back from the device
 		flag = 1;
 	}
 	return flag;
 }
 
 
-//void set_device_address(CommController *comm)
-//{
-//	 uint8_t bit0 =(HAL_GPIO_ReadPin(ID_Bit0_GPIO_Port, ID_Bit0_Pin)==GPIO_PIN_SET);//1 else 0
-//	 uint8_t bit1 =(HAL_GPIO_ReadPin(ID_Bit1_GPIO_Port, ID_Bit1_Pin)==GPIO_PIN_SET);//1 else 0
-//	 uint8_t bit2 =(HAL_GPIO_ReadPin(ID_Bit2_GPIO_Port, ID_Bit2_Pin)==GPIO_PIN_SET);//1 else 0
-//
-//	 uint8_t ID =  (bit2 << 2) | (bit1 << 1) | bit0;
-//
-//	 switch(ID){
-//
-//		 case 1:
-//			 comm->device_id=RIGHT_SOLE_SENSE_ID;
-//			 break;
-//
-//		 case 2:
-//			 comm->device_id=LEFT_SOLE_SENSE_ID;
-//			 break;
-//	 }
-//}
+void set_device_address(CommController *comm)
+{
+    uint8_t bit0 = (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_10) == GPIO_PIN_RESET); // Reads PA15
+    uint8_t bit1 = (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_11) == GPIO_PIN_RESET); // Reads PC10
+    uint8_t bit2 = (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_12) == GPIO_PIN_RESET); // Reads PC11
+
+    uint8_t ID = (bit2 << 2) | (bit1 << 1) | bit0;
+
+    switch(ID)
+    {
+        case 0:
+            comm->device_id = RIGHT_SOLE_SENSE_ID;
+            break;
+
+        case 1:
+            comm->device_id = LEFT_SOLE_SENSE_ID;
+            break;
+
+        // Consider adding cases for other ID values if needed
+    }
+}
+
 

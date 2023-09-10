@@ -59,6 +59,12 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define LED_G_Pin GPIO_PIN_8
 #define LED_G_GPIO_Port GPIOC
+#define FootPin0_Pin GPIO_PIN_10
+#define FootPin0_GPIO_Port GPIOC
+#define FootPin1_Pin GPIO_PIN_11
+#define FootPin1_GPIO_Port GPIOC
+#define FootPIn2_Pin GPIO_PIN_12
+#define FootPIn2_GPIO_Port GPIOC
 
 /* USER CODE BEGIN Private defines */
 

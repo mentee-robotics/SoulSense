@@ -14,8 +14,8 @@
 #define SIZE_OF_IMU_DATA 28 // 4 floats of quaternion , 3 floats of acceleration
 #define SIZE_OF_SOLE_DATA 63 // 32 contact , 28 imu , 3 version
 
-#define RIGHT_SOLE_SENSE_ID 0x21
-#define LEFT_SOLE_SENSE_ID 0x20
+#define RIGHT_SOLE_SENSE_ID 0x13
+#define LEFT_SOLE_SENSE_ID 0x14
 
 typedef enum {
 	IDLE,

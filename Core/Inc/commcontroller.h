@@ -32,7 +32,7 @@ void comm_controller_init(FDCAN_HandleTypeDef *fdcan, CommController *comm);
 
 void send_message(CommController *comm , uint8_t *payload);
 
-//void set_device_address(CommController *comm);
+void set_device_address(CommController *comm);
 
 int process_received_message(CommController *comm);
 
