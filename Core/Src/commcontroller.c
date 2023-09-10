@@ -16,6 +16,7 @@
 void comm_controller_init(FDCAN_HandleTypeDef* fdcan, CommController *comm){
 
 	comm->fdcan = *fdcan;
+//	comm->device_id = 0x13;
 	set_device_address(comm);
 	comm->send_message = false;
 	comm->received_message = false;
@@ -72,20 +73,7 @@ void set_device_address(CommController *comm)
     uint8_t bit1 = (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_11) == GPIO_PIN_RESET); // Reads PC10
     uint8_t bit2 = (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_12) == GPIO_PIN_RESET); // Reads PC11
 
-    uint8_t ID = (bit2 << 2) | (bit1 << 1) | bit0;
-
-    switch(ID)
-    {
-        case 0:
-            comm->device_id = RIGHT_SOLE_SENSE_ID;
-            break;
-
-        case 1:
-            comm->device_id = LEFT_SOLE_SENSE_ID;
-            break;
-
-        // Consider adding cases for other ID values if needed
-    }
+    comm->device_id = (bit2 << 2) | (bit1 << 1) | bit0;
 }
 
 
